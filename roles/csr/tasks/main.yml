@@ -1,0 +1,10 @@
+--- 
+- name: 复制approve.sh 脚本
+  copy: src=approve.sh  dest={{data_k8s_dir}} mode=0755
+- name: 执行approve.sh
+  shell: cd {{data_k8s_dir}} && /bin/bash approve.sh
+
+- name: 查看node状态
+  shell: kubectl get node
+  register: node 
+- debug: var=node.stdout_lines
