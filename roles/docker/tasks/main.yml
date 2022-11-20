@@ -1,6 +1,9 @@
 ---
 - name: 创建docker目录包
-  file: dest={{ data_k8s_dir }} state=directory
+  file: dest={{ item }} state=directory
+  with_items: 
+  - {{data_k8s_dir}}
+  - {{docker_data_dir}}
 
 
 - name: 卸载docker-rpm包

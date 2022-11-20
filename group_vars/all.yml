@@ -10,12 +10,13 @@ k8s_work_dir: '/opt/kubernetes'
 etcd_work_dir: '/opt/etcd'
 tmp_dir: '/tmp/k8s'
 data_k8s_dir: '/data/k8s-node'
+docker_data_dir: '/data/docker'
 
 # 集群网络
 service_cidr: '10.0.0.0/24'
 server_csr_dns: '10.0.0.1'
-cluster_dns: '10.0.0.2'   # 与roles/addons/files/coredns.yaml中IP一致，并且是service_cidr中的IP
-pod_cidr: '10.244.0.0/16' # 与roles/addons/files/calico.yaml中网段一致
+cluster_dns: '10.0.0.10'   # 与roles/addons/files/coredns.yaml中IP一致，并且是service_cidr中的IP
+pod_cidr: '172.16.0.0/16' # 与roles/addons/files/calico.yaml中网段一致
 service_nodeport_range: '30000-32767'
 cluster_domain: 'cluster.local'
 
