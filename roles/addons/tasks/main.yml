@@ -7,12 +7,14 @@
   with_items:
   - coredns.yaml.j2
   - flannel.yaml.j2
+  - busybox.yaml.j2
+  - nginx.yaml.j2
 
 - name: 部署addons
   shell: cd {{k8s_work_dir}}/addons && for yaml in $(ls *.yaml);do kubectl apply -f $yaml;done
 
 - name: 查看Pod状态
-  shell: kubectl get all --all-namespaces
+  shell: sleep 30;kubectl get all --all-namespaces
   register: getall
 - debug: var=getall.stdout_lines
 
