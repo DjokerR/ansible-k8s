@@ -12,15 +12,15 @@
 下载Ansible部署文件：
 
 ```
-# git clone https://github.com/lizhenliang/ansible-install-k8s
+
 # cd ansible-install-k8s
 ```
 
 下载准备好软件包（包含所有涉及文件和镜像，比较大），解压到/root目录：
 
-云盘链接：https://pan.baidu.com/s/1Pai0OkIskcS0wr37byNk0Q
-提取码：1234 
+
 ```
+
 # tar zxf binary_pkg.tar.gz
 ```
 ### 3、修改Ansible文件
@@ -35,7 +35,7 @@
 
 ```
 # vim group_vars/all.yml
-software_dir: '/root/binary_pkg'
+software_dir: /data/software'
 ...
 cert_hosts:
   k8s:
@@ -88,12 +88,4 @@ k8s-node2     Ready    <none>   9h    v1.22.4
 ```
 # ansible-playbook -i hosts add-node.yml -uroot -k
 ```
-### 6.3 所有HTTPS证书存放路径
-部署产生的证书都会存放到目录“ansible-install-k8s-master/ssl”，一定要保存好，后面还会用到~
 
-<br/>
-<br/>
-
-视频教程：https://ke.qq.com/course/266656
-
-![avatar](https://github.com/lizhenliang/Shell-Python-Document/blob/master/%E8%81%94%E7%B3%BB%E6%96%B9%E5%BC%8F.png)

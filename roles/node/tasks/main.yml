@@ -56,9 +56,9 @@
     - kube-proxy
 
 - name: 分发预准备镜像（需要花费一些时间...）
-  copy: src={{ software_dir }}/image/node.tar  dest={{ k8s_work_dir }}
+  copy: src={{ software_dir }}/image/node.tar  dest={{ data_k8s_dir }}
 
 - name: 导入镜像（需要花费一些时间...）
-  shell: cd {{ k8s_work_dir }} && \
+  shell: cd {{ data_k8s_dir }} && \
          tar xf node.tar && \
          for image in $(ls *.tar);do docker load < $image;done
