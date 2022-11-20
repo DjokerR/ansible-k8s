@@ -1,0 +1,44 @@
+---
+- name: 创建docker目录包
+  file: dest={{ data_k8s_dir }} state=directory
+
+
+- name: 卸载docker-rpm包
+  shell:  yum remove  -y {{ item.split('.')[:-1]|join('.') }}
+  with_items:
+  - containerd.io-1.6.9-3.1.el7.x86_64.rpm
+  - container-selinux-2.119.2-1.911c772.el7_8.noarch.rpm
+  - docker-ce-19.03.9-3.el7.x86_64.rpm
+  - docker-ce-cli-20.10.21-3.el7.x86_64.rpm
+  - docker-scan-plugin-0.21.0-3.el7.x86_64.rpm
+
+- name: 分发并解压docker-rpm包
+  unarchive: src={{ item }} dest={{ data_k8s_dir }}
+  with_fileglob:
+    - "{{ software_dir }}/rpm/docker.tar.gz"
+
+- name: 安装docker-rpm包
+  shell:  cd {{data_k8s_dir}} && rpm -ivh {{ item }}
+  with_items:
+  - container-selinux-2.119.2-1.911c772.el7_8.noarch.rpm
+  - docker-scan-plugin-0.21.0-3.el7.x86_64.rpm
+  - docker-ce-cli-20.10.21-3.el7.x86_64.rpm
+  - containerd.io-1.6.9-3.1.el7.x86_64.rpm
+  - docker-ce-19.03.9-3.el7.x86_64.rpm
+
+- name: 分发service文件
+  copy: src=docker.service dest=/usr/lib/systemd/system/
+
+- name: 创建目录
+  file: dest=/etc/docker state=directory
+
+- name: 配置docker
+  copy: src=daemon.json dest=/etc/docker/daemon.json
+
+- name: 启动docker
+  systemd: name=docker state=restarted enabled=yes daemon_reload=yes
+
+- name: 查看状态
+  shell: docker info
+  register: docker 
+- debug: var=docker.stdout_lines

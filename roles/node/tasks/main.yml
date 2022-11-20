@@ -1,0 +1,64 @@
+---
+- name: 创建工作目录
+  file: dest={{ k8s_work_dir }}/{{ item }} state=directory
+  with_items:
+    - bin
+    - cfg
+    - ssl
+    - logs
+
+- name: 创建cni插件目录
+  file: dest={{ item }} state=directory mode=0755
+  with_items:
+    - /opt/cni/bin
+    - /etc/cni/net.d
+
+
+- name: 分发并解压k8s二进制包（需要花费一些时间...）
+  unarchive: src={{ item }} dest=/opt/cni/bin/ mode=0755
+  with_fileglob:
+    - "{{ software_dir }}/bin/cni-plugins-linux-amd64-v1.0.0.tgz"
+
+
+- name: 移动k8s node二进制文件
+  copy: src={{software_dir}}/bin/{{item}}  dest={{ k8s_work_dir }}/bin mode=0755
+  with_items: 
+  - "kubelet"
+  - "kube-proxy"
+
+- name: 分发k8s证书
+  copy: src={{software_dir}}/ssl/k8s/{{ item }} dest={{ k8s_work_dir }}/ssl
+  with_items:
+    - ca.pem
+    - kube-proxy.pem
+    - kube-proxy-key.pem
+
+- name: 分发k8s配置文件
+  template: src={{ item }} dest={{ k8s_work_dir }}/cfg/{{ item.split('.')[:-1]|join('.') }}
+  with_items:
+    - bootstrap.kubeconfig.j2
+    - kubelet.conf.j2
+    - kubelet-config.yml.j2
+    - kube-proxy.kubeconfig.j2
+    - kube-proxy.conf.j2
+    - kube-proxy-config.yml.j2
+
+- name: 分发service文件
+  template: src={{ item }} dest=/usr/lib/systemd/system/{{ item.split('.')[:-1]|join('.') }}
+  with_items:
+    - kubelet.service.j2
+    - kube-proxy.service.j2
+    
+- name: 启动k8s node组件
+  systemd: name={{ item }} state=restarted enabled=yes daemon_reload=yes
+  with_items:
+    - kubelet
+    - kube-proxy
+
+- name: 分发预准备镜像（需要花费一些时间...）
+  copy: src={{ software_dir }}/image/node.tar  dest={{ k8s_work_dir }}
+
+- name: 导入镜像（需要花费一些时间...）
+  shell: cd {{ k8s_work_dir }} && \
+         tar xf node.tar && \
+         for image in $(ls *.tar);do docker load < $image;done
