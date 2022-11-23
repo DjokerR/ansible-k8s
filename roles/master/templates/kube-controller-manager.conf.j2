@@ -11,4 +11,5 @@ KUBE_CONTROLLER_MANAGER_OPTS="--logtostderr=false \
 --cluster-signing-key-file={{ k8s_work_dir }}/ssl/ca-key.pem  \
 --root-ca-file={{ k8s_work_dir }}/ssl/ca.pem \
 --service-account-private-key-file={{ k8s_work_dir }}/ssl/ca-key.pem \
+--feature-gates=RotateKubeletServerCertificate=true \
 --experimental-cluster-signing-duration=87600h0m0s" 

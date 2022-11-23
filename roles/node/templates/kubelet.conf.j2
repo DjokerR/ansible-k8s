@@ -7,4 +7,6 @@ KUBELET_OPTS="--logtostderr=false \
 --bootstrap-kubeconfig={{ k8s_work_dir }}/cfg/bootstrap.kubeconfig \
 --config={{ k8s_work_dir }}/cfg/kubelet-config.yml \
 --cert-dir={{ k8s_work_dir }}/ssl \
+--feature-gates=RotateKubeletClientCertificate=true \
+--feature-gates=RotateKubeletServerCertificate=true \
 --pod-infra-container-image=registry.aliyuncs.com/google_containers/pause:3.2"
